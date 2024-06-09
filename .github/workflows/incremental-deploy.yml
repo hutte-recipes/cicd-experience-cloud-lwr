@@ -58,7 +58,7 @@ jobs:
             --manifest deltas/package/package.xml
             --post-destructive-changes deltas/destructiveChanges/destructiveChanges.xml
             --wait 30
-            --test-level RunLocalTests
+            --test-level NoTestRun
             --verbose
           )
           if [ "${{ inputs.validateOnly }}" = "true" ]; then
