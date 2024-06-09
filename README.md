@@ -15,30 +15,41 @@ When using a sandbox or scratch org that is not having the current config/projec
 
 TODO
 
-Behind the scenes, Help Center template is using Aura framework (screenshot), therefore the same guidelines provided in this recipe apply for any other site using Aura framework. (site-types screenshot).
+Behind the scenes, Build your own ... LWR Framework.
+Note that it's Enhanced LWR, we cannot see "non-enhanced" in the available sites (Sites screenshot).
 
 This recipe includes the [cicd-incremental-deployment](https://github.com/hutte-recipes/cicd-incremental-deployment) recipe in order to validate (in a pull request) and deploy the Experience Cloud sites, see more about this recipe in the linked repository.
 
 ## Pre-requisites
 
-- Create Help Center Site (Digital Experiences), see screenshots, customize it with a background image, publish it.
+- Create TODO (Digital Experiences), see screenshots, customize it with a background image, publish it.
 - Add the SFDX_AUTH_URL_TARGET_ORG env url (https://github.com/hutte-recipes/cicd-incremental-deployment)
+- Create a helloWorld.js LWC to insert as example in the LWR site.
 
 ## Commiting / others
 
+Commit all required metadata by https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5 table for `Enhanced LWR Site` and also include the LWC `helloWorld`.
+
 Make sure of enabling "Digital Experiences" in "Setup" -> "Feature Settings" -> "Digital Experiences" -> "Settings" (screenshot taken).
 
-For Aura Communities, including Help Center community, where we commit the SiteDotCom instead of the ExperienceBundle (see [Tips and Considerations](https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5)), make sure to:
+Make sure to:
 
 - replace the `siteAdmin` with a username that exist in the destination org.
-- add CommunitiesLanding ApexPage and Apex Controller (with the respective test class), this will make the deployment work (see screenshot 21.16.22).
 
-Apex classes such as `SiteLoginController`, `MyProfilePageController`, Visualforce components such as `SitePoweredBy` or Visualforce such as `SiteLogin` or `CommunitiesTemplate` are automatically created on the destination org when the deployment of the mandatory metadata is successful.
+If you get this error
 
-After this deployment of mandatory metadata, we proceed to deploy specific metadata changes that we have done in our site, such as the addition of a background image `Sample`. For this latest, we will deploy the `ContentAsset/sample` metadata, which is the file we originally inserted as background when customizing the site. Note that we don't need to include any other metadata in the commit, this is because this asset file is reference in the SiteDotCome (.site) file, even though it's a binary file and is not human readable.
-Also note that this is a recipe providing guidelines and each scenario will have different needs.
+```
+force-app/main/default/digitalExperienceConfigs/build_your_own_lwr_recipe1.digitalExperienceConfig-meta.xml  The value for urlPathPrefix in DigitalExperienceConfig isn't valid. Check the value and try again.
+```
 
-References
+Then, https://salesforce.stackexchange.com/questions/373845/deploying-experience-site-fails-due-to-the-value-for-urlpathprefix-in-experienc, go to administration and add a URL, see screenshot, then recommit. Committing the
+`digitalExperienceConfig` should be enough, but you can also recommit the initially committed metadata in case of doubt, in case of doing this, untick the commit only selected metadata. (Screenshot).
+
+## Tips
+
+Do it incrementally, validate incrementally with PR validate github action
+
+## References
 
 - https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5
 - https://salesforce.stackexchange.com/questions/380032/trails-project-didnt-work-the-deployment
