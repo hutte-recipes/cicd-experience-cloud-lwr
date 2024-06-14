@@ -1,56 +1,83 @@
-<!-- TODO -->
+# Recipe for Experience Cloud (Aura) CICD with Hutte
 
-https://developer.salesforce.com/docs/atlas.en-us.communities_dev.meta/communities_dev/networks_migrating_from_sandbox.htm
+## Introduction
 
-https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_def_file_config_values.htm#so_communities
+Creating an Experience Cloud site in Salesforce generates a significant amount of metadata, which can be confusing when deploying the site to a higher environment. This raises the question: "What do we need to deploy and how do we deploy it?"
 
-https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_communitiessettings.htm
+The answer is simple! As with any other metadata, it's recommended to use a Git-based strategy with the Metadata API for deployment. To make this process easier, Hutte provides an excellent UI & UX. To understand what needs to be deployed, Salesforce offers great [documentation](https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5), which will be referenced throughout this recipe to explain the steps in detail.
 
-Why isn't the configuration file in Hutte being taken from config/project-scratch-def.json?
-At the moment, we need to set it up manually. (Screenshot).
+Due to differences in the steps depending on whether your Experience Cloud site is LWR or Aura, we have created two recipes:
 
-When using a sandbox or scratch org that is not having the current config/project-scratch-def.json, https://help.salesforce.com/s/articleView?id=sf.networks_enable.htm&language=en_US&type=5
+- If you are looking for steps for a site using the Aura framework, you are in the correct recipe.
+- If you are looking for steps for a site using the LWC framework, navigate to the [cicd-experience-cloud-lwr recipe](https://github.com/hutte-recipes/cicd-experience-cloud-lwr).
 
-## Intro
+To provide steps for a site using the Aura framework, we reference the [Help Center](https://help.salesforce.com/s/articleView?id=sf.networks_help_center_template.htm&type=5) template. The Help Center template uses the Aura framework, so the same guidelines in this recipe apply to any site using the Aura framework.
 
-TODO
+This recipe includes the [cicd-incremental-deployment](https://github.com/hutte-recipes/cicd-incremental-deployment) recipe to validate (in a pull request) and deploy the Experience Cloud sites. See more about this recipe in the linked repository.
 
-Behind the scenes, Build your own ... LWR Framework.
-Note that it's Enhanced LWR, we cannot see "non-enhanced" in the available sites (Sites screenshot).
+## Prerequisites
 
-This recipe includes the [cicd-incremental-deployment](https://github.com/hutte-recipes/cicd-incremental-deployment) recipe in order to validate (in a pull request) and deploy the Experience Cloud sites, see more about this recipe in the linked repository.
+### Experience Cloud Site Creation
 
-## Pre-requisites
+1. In your Hutte project, create a new Hutte feature, assigning the Org where you will create the Experience Cloud Site. It's important to create the Hutte Feature before making changes so that Hutte can track the new changes, making the commit experience simpler and quicker.
+2. Create a Help Center Site in your development Org (Digital Experiences) - See [Salesforce docs](https://help.salesforce.com/s/articleView?id=sf.networks_help_center_create.htm&type=5).
 
-- Create TODO (Digital Experiences), see screenshots, customize it with a background image, publish it.
-- Add the SFDX_AUTH_URL_TARGET_ORG env url (https://github.com/hutte-recipes/cicd-incremental-deployment)
-- Create a helloWorld.js LWC to insert as example in the LWR site.
+   <img src="./docs/images/help-center-site-creation-0.png" alt="drawing" width="400"/>
 
-## Commiting / others
+3. Add the [Sample](./docs/images/sample.jpeg) image as a background to the Hero component (see below screenshot).
 
-Commit all required metadata by https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5 table for `Enhanced LWR Site` and also include the LWC `helloWorld`.
+   <img src="./docs/images/community-builder-3.png" alt="drawing" width="400"/>
 
-Make sure of enabling "Digital Experiences" in "Setup" -> "Feature Settings" -> "Digital Experiences" -> "Settings" (screenshot taken).
+4. Save the changes.
 
-Make sure to:
+   <img src="./docs/images/help-center-aura.jpg" alt="drawing" width="400"/>
 
-- replace the `siteAdmin` with a username that exist in the destination org.
+### GitHub Setup
 
-If you get this error
+- Follow the steps specified in the [README.md](https://github.com/hutte-recipes/cicd-incremental-deployment) file of the `cicd-incremental-deployment` recipe to configure the GitHub Actions that will validate and deploy the delta changes of the Experience Cloud site to the destination org.
 
-```
-force-app/main/default/digitalExperienceConfigs/build_your_own_lwr_recipe1.digitalExperienceConfig-meta.xml  The value for urlPathPrefix in DigitalExperienceConfig isn't valid. Check the value and try again.
-```
+### Enable Digital Experiences in the Destination Org
 
-Then, https://salesforce.stackexchange.com/questions/373845/deploying-experience-site-fails-due-to-the-value-for-urlpathprefix-in-experienc, go to administration and add a URL, see screenshot, then recommit. Committing the
-`digitalExperienceConfig` should be enough, but you can also recommit the initially committed metadata in case of doubt, in case of doing this, untick the commit only selected metadata. (Screenshot).
+- Ensure "Digital Experiences" is enabled in "Setup" -> "Feature Settings" -> "Digital Experiences" -> "Settings".
 
-## Tips
+   <img src="./docs/images/enable-digital-experiences.png" alt="drawing" width="500"/>
 
-Do it incrementally, validate incrementally with PR validate github action
+## Steps
 
-## References
+Once we have completed the prerequisites, created the site, configured GitHub, and enabled Digital Experiences in the destination org, we can proceed with tracking the site changes in Git and deploying them. Here are the steps:
 
-- https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5
-- https://salesforce.stackexchange.com/questions/380032/trails-project-didnt-work-the-deployment
-- https://github.com/trailheadapps/ebikes-lwc
+_Note: Steps 1, 2, and 3 can be combined into a single commit. For clarity and separation of concerns, these instructions are split into three different commits._
+
+1. **Commit the baseline metadata:** Navigate to the previously created Hutte feature, click `Pull Changes`. A long list of changes will display, which is expected since Salesforce does a lot behind the scenes when creating a site. Only select some of these changes (as specified in the [Salesforce docs](https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5)).
+
+   <img src="./docs/images/hutte-commit-selection.png" alt="drawing" width="700"/>
+
+   Note: All other metadata will be automatically generated in the destination org upon deployment; we won't need to deploy them.
+
+2. **Commit some extra metadata to avoid deployment issues:** For Aura Communities, including the Help Center community, commit the `SiteDotCom` instead of `ExperienceBundle` (see [Tips and Considerations](https://help.salesforce.com/s/articleView?id=sf.networks_migrating_from_sandbox.htm&type=5)). Commit the `CommunitiesLanding` ApexPage, its Apex Controller, and the respective Apex test class to avoid deployment issues.
+
+   <img src="./docs/images/hutte-commit-extra-metadata.png" alt="drawing" width="700"/>
+
+3. **Commit the customizations:** Apart from the baseline site, we also added a `Sample` image as a background to the `Hero` component. Add the `ContentAsset` that includes this change.
+
+   <img src="./docs/images/hutte-commit-content-asset.png" alt="drawing" width="700"/>
+
+4. **Replacement of `siteAdmin` and `siteGuestRecordDefaultOwner`:** Due to an internal limitation of the Experience Cloud committed metadata, the `.site` metadata is committed with the `siteAdmin` and `siteGuestRecordDefaultOwner` of the Salesforce user in the developer org. Change these fields in GitHub to use the username of the site admin in the destination environment (ensure this Salesforce user exists in the destination org). This task requires some Git skills, so reach out to a person with Git knowledge if needed.
+
+   <img src="./docs/images/update-site-user.png" alt="drawing" width="700"/>
+
+5. **Create a Pull Request through Hutte:** Creating a GitHub Pull Request (which we can do from the Hutte UI) allows another person to review the changes. A deployment validation will automatically run as part of the GitHub action from the [cicd-incremental-deployment recipe](https://github.com/hutte-recipes/cicd-incremental-deployment). This action validates that the changes included in the Pull Request can be deployed to the destination org without issues, without actually deploying any changes.
+
+   <img src="./docs/images/hutte-create-pr.png" alt="drawing" width="700"/>
+
+   <img src="./docs/images/hutte-pr-2.png" alt="drawing" width="700"/>
+
+   By checking the details of the GitHub action run, you can see the logs of the metadata changes being validated.
+
+   <img src="./docs/images/hutte-pr-logs.png" alt="drawing" width="700"/>
+
+6. **Merge the Pull Request & automated deployment to the destination org:** Upon successful validation and code review, merge the Pull Request. An automated GitHub Action (from the [cicd-incremental-deployment recipe](https://github.com/hutte-recipes/cicd-incremental-deployment)) will deploy the changes to the destination org.
+
+   <img src="./docs/images/hutte-deploy-after-merge.png" alt="drawing" width="700"/>
+
+After the GitHub action is successful, verify the changes in the destination org.
