@@ -8,10 +8,8 @@ The answer is simple! As with any other metadata, it's recommended to use a Git-
 
 Due to differences in the steps depending on whether your Experience Cloud site is LWR or Aura, we have created two recipes:
 
-- If you are looking for steps for a site using the Aura framework, you are in the correct recipe.
-- If you are looking for steps for a site using the LWC framework, navigate to the [cicd-experience-cloud-lwr recipe](https://github.com/hutte-recipes/cicd-experience-cloud-lwr).
-
-To provide steps for a site using the Aura framework, we reference the [Help Center](https://help.salesforce.com/s/articleView?id=sf.networks_help_center_template.htm&type=5) template. The Help Center template uses the Aura framework, so the same guidelines in this recipe apply to any site using the Aura framework.
+- If you are looking for steps for a site using the LWC framework, you are in the correct recipe.
+- If you are looking for steps for a site using the Aura framework, navigate to the [cicd-experience-cloud-aura recipe](https://github.com/hutte-recipes/cicd-experience-cloud-aura).
 
 This recipe includes the [cicd-incremental-deployment](https://github.com/hutte-recipes/cicd-incremental-deployment) recipe to validate (in a pull request) and deploy the Experience Cloud sites. See more about this recipe in the linked repository.
 
